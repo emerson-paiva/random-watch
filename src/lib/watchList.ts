@@ -38,12 +38,19 @@ export const getWatchListByType = (type: 'movie' | 'series'): WatchItem[] => {
 
 export const getRandomUnwatched = (
   type: 'movie' | 'series'
-): WatchItem | null => {
-  const watchList: WatchItem[] = getWatchList()
-    .filter((item: WatchItem) => !item.watched)
-    .filter((item: WatchItem) => item.type === type)
+): WatchItem | { error: string } => {
+  let watchList: WatchItem[] = getWatchList().filter(
+    (item: WatchItem) => !item.watched
+  )
 
-  if (watchList.length === 0) return null
+  if (type) {
+    watchList = watchList.filter((item: WatchItem) => item.type === type)
+  }
+
+  if (watchList.length === 0)
+    return {
+      error: `Remove the filters or add more ${type}`,
+    }
 
   const randomIndex = Math.floor(Math.random() * watchList.length)
 
