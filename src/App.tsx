@@ -1,11 +1,14 @@
-import { Button } from '@/components/ui/button'
 import { NewMovieDialog } from '@/components/NewMovie/NewMovie'
+import { WatchListProvider } from '@/context/Movies'
+import { WatchList } from './components/WatchList/WatchList'
 
 function App() {
   return (
     <main className="relative w-full h-full min-h-[100vh]">
-      <Button>Click me</Button>
-      <NewMovieDialog />
+      <WatchListProvider>
+        <WatchList />
+        <NewMovieDialog />
+      </WatchListProvider>
     </main>
   )
 }
