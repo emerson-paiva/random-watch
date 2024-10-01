@@ -88,7 +88,11 @@ export const NewMovieDialog = () => {
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button type="button" onClick={() => addMovie(movie)}>
+            <Button
+              type="button"
+              onClick={() => addMovie(movie)}
+              disabled={!movie.title}
+            >
               Salvar
             </Button>
           </DialogClose>

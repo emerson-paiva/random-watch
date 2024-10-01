@@ -6,15 +6,8 @@ import {
   useState,
 } from 'react'
 import { v4 as uuid } from 'uuid'
-
-// const STORE_KEY = 'watchList'
-
-export interface WatchItem {
-  title: string
-  watched: boolean
-  type: 'movie' | 'series'
-  uuid: string
-}
+import * as watchListStorage from '@/store/watchList'
+import { type WatchItem } from '@/store/watchList'
 
 export type MovieToAdd = Pick<WatchItem, 'type' | 'title'>
 
@@ -22,9 +15,11 @@ type WatchListContextType = {
   watchList: WatchItem[]
   addMovie: (movie: MovieToAdd) => void
   removeMovie: (movieId: string) => void
+  toggleAsWatch: (movieId: string) => void
+  getRandomMovieToWatch: (type?: WatchItem['type']) => string
 }
 
-const initialValue: WatchItem[] = []
+const initialValue: WatchItem[] = watchListStorage.getWatchList()
 
 const WatchListContext = createContext<WatchListContextType | null>(null)
 
@@ -45,8 +40,29 @@ export const WatchListProvider = ({ children }: PropsWithChildren) => {
   const removeMovie = (uuid: string) =>
     setWatchList((movies) => movies.filter((movie) => movie.uuid !== uuid))
 
+  const toggleAsWatch = (uuid: string) =>
+    setWatchList((movies) =>
+      movies.map((movie) => ({
+        ...movie,
+        watched: movie.uuid === uuid ? !movie.watched : movie.watched,
+      }))
+    )
+
+  const getRandomMovieToWatch = (type?: 'movie' | 'series') => {
+    const itemsToWatch = watchList.filter(
+      (item: WatchItem) => !item.watched && (type ? item.type === type : true)
+    )
+
+    if (itemsToWatch.length === 0)
+      return `Remove the filters or add more ${type}`
+
+    const randomIndex = Math.floor(Math.random() * itemsToWatch.length)
+
+    return itemsToWatch[randomIndex].title
+  }
+
   useEffect(() => {
-    console.log(watchList)
+    watchListStorage.setWatchList(watchList)
   }, [watchList])
 
   return (
@@ -55,6 +71,8 @@ export const WatchListProvider = ({ children }: PropsWithChildren) => {
         watchList,
         addMovie,
         removeMovie,
+        toggleAsWatch,
+        getRandomMovieToWatch,
       }}
     >
       {children}
