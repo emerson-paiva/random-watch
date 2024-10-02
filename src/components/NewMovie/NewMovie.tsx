@@ -32,7 +32,7 @@ export const NewMovieDialog = () => {
       <DialogTrigger asChild>
         <Button
           variant="default"
-          className="absolute rounded-full bottom-4 right-4"
+          className="absolute rounded-full bottom-6 right-6"
           size="icon"
         >
           +
